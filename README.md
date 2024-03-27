@@ -53,10 +53,10 @@ and save it in `~/.config/gomatria/` folder on *nix or
 on Windows.
 ```json
 {
-  "Name": "My Cipher",
-  "Desc": "My esoteric gematria cypher.",
-  "CaseSensitive": false,
-  "Letters" : {
+  "name": "My Cipher",
+  "desc": "My esoteric gematria cypher.",
+  "case_sensitive": false,
+  "letters": {
       "A": 10,
       "B": 11,
       "C": 12,

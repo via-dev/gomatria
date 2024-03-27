@@ -1,8 +1,8 @@
 {
-	"Name":"aq62",
-  "Desc":"Case sensitive version of the aq36 cipher.",
-	"CaseSensitive":true,
-	"Letters":{
+	"name":"aq62",
+  "desc":"Case sensitive version of the aq36 cipher.",
+	"case_sensitive":true,
+	"letters":{
 		"A":10,
 		"B":11,
 		"C":12,

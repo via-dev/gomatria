@@ -1,8 +1,8 @@
 {
-	"Name":"aq36",
-  "Desc": "Alphanumeric english gematria cipher, sometimes called \"Aqqabala\".",
-	"CaseSensitive":false,
-	"Letters":{
+	"name":"aq36",
+  "desc": "Alphanumeric english gematria cipher, sometimes called \"Aqqabala\".",
+	"case_sensitive":false,
+	"letters":{
 		"A":10,
 		"B":11,
 		"C":12,

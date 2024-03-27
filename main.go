@@ -12,16 +12,18 @@ import (
 	"strconv"
 	"strings"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/mattn/go-sqlite3" // sqlite driver
 )
 
+// Alphabet is a collection of letters and their values
 type Alphabet map[string]int
 
+// Cipher definition
 type Cipher struct {
-	Name          string
-	Desc          string
-	CaseSensitive bool
-	Letters       Alphabet
+	Letters       Alphabet `json:"letters,omitempty"`
+	Name          string   `json:"name,omitempty"`
+	Desc          string   `json:"desc,omitempty"`
+	CaseSensitive bool     `json:"case_sensitive,omitempty"`
 }
 
 var (
@@ -31,7 +33,7 @@ var (
 	listFiles  = flag.Bool("l", false, "List available ciphers")
 	viewCipher = flag.Bool("v", false, "View info about a cipher")
 	textQuery  = flag.Bool("q", false, "Query the database with words")
-	numQuery   = flag.Bool("n", false, "Query the databse with a number")
+	numQuery   = flag.Bool("n", false, "Query the database with a number")
 	noSave     = flag.Bool("x", false, "Don't save words to the database")
 
 	cfgdir string
@@ -81,7 +83,7 @@ func main() {
 			arg = strings.ToUpper(arg)
 		}
 
-		val := AqCalc(arg, ciph)
+		val := aqCalc(arg, ciph)
 		values = append(values, val)
 
 		fmt.Printf("%s = %v\n", arg, val)
@@ -111,7 +113,7 @@ func removeDuplicate[T comparable](sliceList []T) []T {
 	return list
 }
 
-func AqCalc(text string, ciph Cipher) (result int) {
+func aqCalc(text string, ciph Cipher) (result int) {
 	for _, letter := range strings.Split(text, "") {
 		value, ok := ciph.Letters[letter]
 		if ok {
@@ -121,7 +123,7 @@ func AqCalc(text string, ciph Cipher) (result int) {
 			case "0":
 				result += 0
 			case "1":
-				result += 1
+				result++
 			case "2":
 				result += 2
 			case "3":
@@ -234,11 +236,15 @@ func saveDB(ciph Cipher, text string) {
 
 	entry := text
 
-	entryval := AqCalc(text, ciph)
+	entryval := aqCalc(text, ciph)
 
 	dbname := fmt.Sprintf("%s_%v", ciph.Name, entryval)
 
-	table := "CREATE TABLE IF NOT EXISTS %s (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, entry VARCHAR(250) UNIQUE);"
+	table := `
+  CREATE TABLE IF NOT EXISTS %s (
+    id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+    entry VARCHAR(250) UNIQUE);`
+
 	table = fmt.Sprintf(table, dbname)
 	insert := "INSERT OR IGNORE INTO %s (entry) VALUES (@val);"
 	insert = fmt.Sprintf(insert, dbname)
@@ -260,7 +266,7 @@ func queryDB(num int, ciph Cipher) {
 	rows, errQuery := db.Query(fmt.Sprintf("SELECT entry FROM %s;", dbname))
 
 	if errQuery != nil {
-		fmt.Printf("There are no entires with value %v for cipher %s.\n", num, ciph.Name)
+		fmt.Printf("There are no entries with value %v for cipher %s.\n", num, ciph.Name)
 		os.Exit(1)
 	}
 
@@ -276,7 +282,7 @@ func queryDB(num int, ciph Cipher) {
 	sort.Strings(entries)
 
 	if len(entries) == 0 {
-		fmt.Printf("There are no entires with value %v for cipher %s.\n", num, ciph.Name)
+		fmt.Printf("There are no entries with value %v for cipher %s.\n", num, ciph.Name)
 		os.Exit(1)
 	}
 
